@@ -1,0 +1,6 @@
+rm-bp1bd35r37crw6g87ao.mysql.rds.aliyuncs.com
+tpysh1
+tpySH666
+finance
+3306
+mysql+pymysql://tpysh1:tpySH666@rm-bp1bd35r37crw6g87ao.mysql.rds.aliyuncs.com:3306/finance?charset=utf8
