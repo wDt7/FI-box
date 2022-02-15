@@ -15,6 +15,10 @@ plt.rcParams['axes.grid'] = False
 
 # path = input('输入存放数据库信息的地址')
 for p in sys.path:
+    
+    if 'wdt' in p:
+        path = '/Users/wdt/db.txt'
+    
     if 'Figures' in p :
         path = os.path.abspath(p +'/db.txt')
 
