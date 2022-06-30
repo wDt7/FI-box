@@ -14,9 +14,11 @@ plt.rcParams['axes.unicode_minus'] = False
 plt.rcParams['axes.grid'] = False
 
 # path = input('输入存放数据库信息的地址')
+
+path = ''
 for p in sys.path:
     
-    if 'wdt' in p:
+    if 'wdt' in p and "\\" not in p:
         path = '/Users/wdt/db.txt'
         break
     
@@ -25,7 +27,12 @@ for p in sys.path:
         path = 'c:\\Users\\ICESS\\db.txt'
         break
         
-    if 'Figures' in p :
+
+    if 'wdt' in p and "\\"  in p:
+        path = 'Z:\\Users\\wdt\\db.txt'
+        break
+
+    if 'Figures' in p and not path:
         path = os.path.abspath(p +'/db.txt')
 
 
@@ -72,7 +79,7 @@ def get_un_upload_timerange(table_name):
 
     excu="select * from "
     table_name=table_name
-    dff = pd.read_sql(excu+table_name,conn)
+    dff = pd.read_sql(excu+table_name,engine)
     t=dff.sort_values("date",ascending=False).head(1)["date"].values[0]
     start_time=np.datetime_as_string(t, unit='D')
     rpt_date=dt.datetime.now().strftime('%Y-%m-%d')#设定报告期，读取报告写作日时间
@@ -88,7 +95,7 @@ def get_data(table_name, start=0 ,end ='2099-05-29'):
     excu_date = " where date >= '{}' and date <= '{}';".format(start , end)
     if start == 0:
         excu_date = ''
-    dff = pd.read_sql(excu+table_name+excu_date,conn)
+    dff = pd.read_sql(excu+table_name+excu_date,engine)
     return dff
 
 def get_all_table_name():
@@ -105,10 +112,6 @@ def set_data_index(df):
     return df
 
 
-# for table_name in refresh_table_list:
-#     start_time,rpt_date=get_un_upload_timerange(table_name)
-#     df=read_data_from_wind(wind_code,start_time,rpt_date)
-#     upload_data(df,table_name,"append")
 
 def daily_uplpad_table_names():
     df=get_data("resoure_table")
@@ -119,7 +122,13 @@ def get_latest_date(table_name):
     conn, engine = get_db_conn(path)
     excu="select max(date) from "
     table_name=table_name
-    return pd.read_sql(excu+table_name ,conn).iloc[-1,-1]
+    return pd.read_sql(excu+table_name ,engine).iloc[-1,-1]
+
+def get_latest_timestamp(table_name):
+    conn, engine = get_db_conn(path)
+    excu="select max(time1) from "
+    table_name=table_name
+    return pd.read_sql(excu+table_name ,engine).iloc[-1,-1]
 
 def get_date(dir):
     """从文件名中提取日期"""
@@ -141,15 +150,31 @@ def savefig(fig, name):
     fig.savefig(name+'.jpg',dpi=300,bbox_inches='tight')
     
     
-def rolling_corr(se1 , se2 , n):
+def rolling_corr(se1 , se2 , n , method=0):
+    """
+    method = 0/1 -> pearson / spearman correlation
+    """
+    
     df = pd.concat([se1,se2] , axis=1).dropna()
-    # 滚动相关性  
-    tmp = df.rolling(n).corr()
-    tmp = tmp[tmp<0.99].iloc[:,0].dropna()
-    idxs=[]
-    for idx in tmp.index :
-        idxs.append(idx[0])
-    tmp.index = idxs    
+    
+    if method == 0:
+        # 滚动相关性  
+        tmp = df.rolling(n).corr()
+        tmp = tmp[tmp<0.99999].iloc[:,0].dropna()
+        idxs=[]
+        for idx in tmp.index :
+            idxs.append(idx[0])
+        tmp.index = idxs    
+    
+    elif method == 1:
+        
+        for idx in df.index[n-1:]:
+            df_n = df.loc[:idx].iloc[-n:]
+            
+            df.loc[idx,'corr1'] = df_n.corr(method='spearman').iloc[0,1]
+            
+        tmp = df['corr1']
+            
     return tmp
 
 def color_list():
@@ -175,6 +200,6 @@ def LLT(f, period):
     return LLTSeries
 
 def get_ex_days(start='1998-05-29' ,end ='2099-05-29'):
-    df = get_data('gz_idx')
+    df = get_data('t10_1d')
     
     return df.loc[(df.date >= start)&(df.date<=end),'date'].tolist()

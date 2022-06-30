@@ -380,12 +380,12 @@ class weeklyReport:
         df = do.get_data('rates',start,end)
         
         #### P1    
-        d = pd.DataFrame(index=['国债','国开债','地方债'],\
+        d = pd.DataFrame(index=['国债','国开债'],\
             columns=['1Y','3Y','5Y','7Y','10Y'])
         d.loc['国债'] = ((df.iloc[-1,:5] - df.iloc[0,:5])*100).tolist()
         d.loc['国开债'] = ((df.iloc[-1,10:15] - df.iloc[0,10:15])*100).tolist()
-        d.loc['地方债'] = ((df.iloc[-1,5:10] - df.iloc[0,5:10])*100).tolist()
-        # plt.style.use({'font.size' : 12}) 
+        # d.loc['地方债'] = ((df.iloc[-1,5:10] - df.iloc[0,5:10])*100).tolist()
+
         fig1,ax = plt.subplots(figsize=(4.15,1.42 ),dpi = 300)
 
         d.plot(kind = 'bar',\
@@ -670,16 +670,16 @@ class weeklyReport:
         # P1
         fig1,ax = plt.subplots(figsize=(4.15,1.42),dpi = 300)
 
-        ax.bar(date,CreditBondTrading_stat['笔数'], width=0.7, color='#f0833a',label="笔数")
+        ax.bar(date,CreditBondTrading_stat['笔数'], width=0.7, color='#f0833a',label="笔数(左轴)")
     
         if not self.isMonth:
             for a,b in zip(date,CreditBondTrading_stat['笔数']):
                 plt.text(a,200, '%.f' % b, ha='center', va= 'top',fontsize=8)
         
-        ax.legend(ncol=3,loc=3, bbox_to_anchor=(0.25,-0.65),borderaxespad = 0.,fontsize=10,frameon=False)
+        ax.legend(ncol=3,loc=3, bbox_to_anchor=(0.17,-0.65),borderaxespad = 0.,fontsize=10,frameon=False)
 
         ax_=ax.twinx()
-        ax_.plot(date,CreditBondTrading_stat['均价'],'#3778bf',label="均价")
+        ax_.plot(date,CreditBondTrading_stat['均价'],'#3778bf',label="均价(右轴)")
         
         if not self.isMonth:
             for a,b in zip(date,CreditBondTrading_stat['均价']):
@@ -696,15 +696,15 @@ class weeklyReport:
         fig2,ax = plt.subplots(figsize=(4.15,1.42),dpi = 300)
 
         ax.bar(date,CreditBondTrading_stat['情绪指数'], 
-               width=0.7, color='#f0833a',label="情绪指数",
+               width=0.7, color='#f0833a',label="情绪指数(左轴)",
               )
         # if not self.isMonth:
         #     for a,b in zip(date,CreditBondTrading_stat['情绪指数']):
         #         plt.text(a,0.5, '%.2f' % b, ha='center', va= 'top',fontsize=8)
-        ax.legend(ncol=3,loc=3, bbox_to_anchor=(0.15,-0.65),borderaxespad = 0.,fontsize=10,frameon=False)
+        ax.legend(ncol=3,loc=3, bbox_to_anchor=(0.07,-0.65),borderaxespad = 0.,fontsize=10,frameon=False)
 
         ax_=ax.twinx()
-        ax_.plot(date,CreditBondTrading_stat['风险偏好指数'],'#3778bf',label="风险偏好指数")
+        ax_.plot(date,CreditBondTrading_stat['风险偏好指数'],'#3778bf',label="风险偏好指数(右轴)")
         if not self.isMonth:
             for a,b in zip(date,CreditBondTrading_stat['风险偏好指数']):
                 plt.text(a, b+0.001, '%.2f' % b, ha='center', va= 'center',fontsize=8)
@@ -719,14 +719,14 @@ class weeklyReport:
         # P3
         fig3,ax = plt.subplots(figsize=(4.15,1.42),dpi = 300)
 
-        ax.plot(date,CreditBondTrading_stat['信用扩张指数'],'#f0833a',label="信用分歧指数（左轴）")
+        ax.plot(date,CreditBondTrading_stat['信用扩张指数'],'#f0833a',label="信用分歧指数(左轴)")
         if not self.isMonth:
             for a,b in zip(date,CreditBondTrading_stat['信用扩张指数']):
                 plt.text(a,b+0.001, '%.2f' % b, ha='center', va= 'top',fontsize=8)
         ax.legend(ncol=3,loc=3, bbox_to_anchor=(0,-0.65),borderaxespad = 0.,fontsize=10,frameon=False)
 
         ax_=ax.twinx()
-        ax_.plot(date,CreditBondTrading_stat['平均期限'],'#3778bf',label="平均期限（右轴）")
+        ax_.plot(date,CreditBondTrading_stat['平均期限'],'#3778bf',label="平均期限(右轴)")
         if not self.isMonth:
             for a,b in zip(date,CreditBondTrading_stat['平均期限']):
                 plt.text(a, b+0.001, '%.2f' % b, ha='center', va= 'center',fontsize=8)
@@ -741,8 +741,8 @@ class weeklyReport:
 
     def secondary_rate(self,start,end):
         # TODO 二级利率债，需要选定券种
-        gk1 = '210210.IB' ;gk2='210215.IB'
-        gz = '210009.IB'
+        gk1 = '220205.IB' ;gk2='220210.IB'
+        gz = '220003.IB'
         
         df = do.get_data('secondary_rate_sec',start,end)
 
@@ -1092,12 +1092,10 @@ class MacroReport:
         data[['PTA产业链负荷率:PTA工厂']].dropna(axis = 0).plot(ax = ax[0,0])
         ax[0,0].set_title('PTA产业负荷率')
         ## p2 玻璃产能利用率
-        data[['浮法玻璃:产能利用率']].dropna(axis = 0).plot(ax = ax[0,1])
-        ax[0,1].set_title('玻璃产能利用率')
+        fig.delaxes(ax[0,1])
         ## p3 全国高炉开工率
-        data[['高炉开工率(163家):全国']].dropna(axis = 0).plot(ax = ax[1,0])
+        data[['高炉开工率(247家):全国']].dropna(axis = 0).plot(ax = ax[1,0])
         ax[1,0].set_title('全国高炉开工率')
-        #ax[1,0].legend(loc = 'best')
         ## 删除第四张
         fig.delaxes(ax[1,1])
         ## p44
@@ -1139,13 +1137,11 @@ class MacroReport:
         start=self.start.strftime("%Y%m%d")
 
         # 提取数据
-        data = do.get_data('fig_cpi_ppi_related', start , end)
-        # data = pd.read_sql("select * from fig_cpi_ppi_related  \
-        # where date >= '{}' and date <= '{}';".format(start , end),conn)
+        data = do.get_data('fig_cpi_ppi_related',start, end)
         data.index = data.date
 
         # 画图 -v2
-        ##  农产品批发价格指数/ /iCPI
+        ##  农产品批发价格指数/ /iCPI
         fig, ax = plt.subplots(nrows=3,ncols=2,figsize = (12,12), dpi=100)
 
         ## p1
@@ -1166,7 +1162,21 @@ class MacroReport:
         data[['iCPI:总指数:日环比']].dropna(axis = 0).plot(ax = ax[1,0])
         ax[1,0].set_title('iCPI')
         ## p4
-        fig.delaxes(ax[1,1])
+        dff = do.get_data('fig_cpi_ppi_related'); dff.index = dff.date
+        dff = dff[['平均价:猪肉:全国']].dropna()
+        dff1 = dff['2019'].reset_index(drop=True)
+        dff2 = dff['2020'].reset_index(drop=True)
+        dff3 = dff['2021'].reset_index(drop=True)
+        dff4 = dff['2022'].reset_index(drop=True)
+        ax[1,1].plot(dff1, label = '2019')
+        ax[1,1].plot(dff2, label = '2020')
+        ax[1,1].plot(dff3, label = '2021')
+        ax[1,1].plot(dff4, label = '2022')
+        dates = dff['2019'].index.strftime('%m-%d')    
+        ax[1,1].set_xticks(range(52)[::6] , dates[::6])
+        ax[1,1].legend()
+        ax[1,1].set_title('全国猪肉平均价格')
+        
         ## p5
         data[['南华综合指数']].dropna(axis=0).plot(ax=ax[2,0])
         ax[2,0].set_title('南华综合指数')
@@ -1294,12 +1304,11 @@ class MacroReport:
         ax[0,1].set_title('钢铁库存')
         ## P3
         data[['水泥价格指数:全国']].dropna(axis=0).plot(ax=ax[1][0])
-        ax10_ = ax[1][0].twinx()
-        data[['中国玻璃价格指数']].dropna(axis=0).plot(ax=ax10_,color='red')
-        ax10_.legend(loc = 'lower right')
-        ax[1,0].set_title('水泥和玻璃价格指数')
+        ax[1,0].legend(loc = 'lower right')
+        ax[1,0].set_title('水泥价格指数')
         ## P4
-        fig.delaxes(ax[1,1])
+        data[['期货收盘价(活跃合约):螺纹钢']].dropna(axis=0).plot(ax=ax[1,1])
+        ax[1,1].set_title('螺纹钢价格')
         ## P5
         data[['中国盛泽化纤价格指数']].dropna(axis=0).plot(ax=ax[2,0])
         ax[2,0].set_title('化纤价格')
@@ -1353,7 +1362,10 @@ class MacroReport:
         #     label='商品房成交面积：累计同比(月)',title='商品房成交面积：累计同比(月)')
         # data_monthly['汽车_cum'].pct_change(periods=12)['2019':].plot(ax=ax[1],\
         #     label='汽车销售：累计同比(月)',itle='汽车销售：累计同比(月)')
-        
+        # data_monthly['汽车_cum'].pct_change(periods=12)['2016-03':].plot(
+        #     ax=ax[2,1],
+        #     label='汽车销售：累计同比(月)',title='汽车销售：累计同比(月)')
+        # ax[2,0].set_ylabel('%')
         # fig.savefig('cum_tb.jpg',dpi=300,bbox_inches='tight')
             
         # 画图
@@ -1368,23 +1380,31 @@ class MacroReport:
             title = '土地成交面积：同比(月)')
         ax[0,1].set_ylabel('%')
         
-        ## P00
+        ## row2
         data[['30大中城市:商品房成交面积']].dropna().plot(ax=ax[1,0])
         data[['当周日均销量:乘用车:厂家零售']].dropna().plot(ax=ax[1,1])
         ax[1,0].set_title('商品房成交面积')
         ax[1,1].set_title('汽车销售')
         
-        ## P11
-        tmp = do.get_data('macro_month_1'); tmp.index = tmp.date
-        tmp[['社零总额:同比']].pct_change(periods=12)['2016-03':].plot(
-            ax=ax[2,0],
-            title='社零总额:同比')
-        data_monthly['汽车_cum'].pct_change(periods=12)['2016-03':].plot(
-            ax=ax[2,1],
-            label='汽车销售：累计同比(月)',title='汽车销售：累计同比(月)')
-        ax[2,0].set_ylabel('%')
-        ax[2,1].set_ylabel('%')
-        
+        ## row3
+        ax[2,0].plot(data['30大中城市:商品房成交面积'].dropna().rolling(10).mean()['2021-06':])
+        ax[2,0].set_title('商品房成交面积(MA10)')
+        # 
+        df = data[['当周日均销量:乘用车:厂家零售']].dropna()
+        se1 = df.iloc[:,0]
+        df['month'] = df.index.strftime('%Y-%m')
+        dff = df.groupby('month').mean()
+        dff.index = pd.to_datetime(dff.index)
+        se2 = dff.iloc[:,0]
+        ax[2,1].bar(se1['2021-06':].index , se1['2021-06':] , width=3) #@
+        ax_ = ax[2,1].twinx()
+        ax_.scatter(se2['2021-06':].index,se2['2021-06':],
+                    marker = 'v',c=do.color_list()[4],s=68,
+                    label='当月日均销量')
+        ax[2,1].set_title('汽车日均销量')
+        ax_.legend(loc='upper left')
+
+                
         ## P22
         ax[3,0].plot(data[['100大中城市:成交土地溢价率:当周值']].dropna(),color ='C0')
         ax[3,0].set_title('房地产成交土地溢价率')
