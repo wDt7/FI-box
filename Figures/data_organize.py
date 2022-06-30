@@ -18,7 +18,13 @@ for p in sys.path:
     
     if 'wdt' in p:
         path = '/Users/wdt/db.txt'
+        break
     
+    if 'ICESS' in p:
+        #windows
+        path = 'c:\\Users\\ICESS\\db.txt'
+        break
+        
     if 'Figures' in p :
         path = os.path.abspath(p +'/db.txt')
 
