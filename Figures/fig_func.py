@@ -11,17 +11,18 @@ def gk_new_old(axes):
     #!需要手动调整
     data = do.get_data('gk10_yield')
     data.index = data.date
-    (data['210210.IB'] - data['210215.IB'])\
-        ['2021-10-12':].plot(ax=axes,
-            ls='--',label = '210210-210215')  
     
-    (data['210205.IB'] - data['210210.IB'])\
-        ['2021-08':'2021-10'].plot(ax=axes,
-            ls='--',label = '210205-210210')   
-
-    (data['200215.IB'] - data['210205.IB'])\
-        ['2021-04':'2021-08'].plot(ax=axes,
-            ls='--',label = '200215-210205')
+    (data['220205.IB'] - data['220210.IB'])\
+        [:].plot(ax=axes,
+            ls='--',label = '220205-220210')
+    
+    (data['210215.IB'] - data['220205.IB'])\
+        [:'2022-04'].plot(ax=axes,
+            ls='--',label = '210215-220205')
+        
+    (data['210210.IB'] - data['210215.IB'])\
+        [:'2022-01'].plot(ax=axes,
+            ls='--',label = '210210-210215')   
           
     axes.legend(fontsize=10,ncol=1,frameon=False,loc='best')
     return axes
@@ -95,7 +96,7 @@ def credit_curve(axes, grade,end_day):
     
     # * 信用债收益率曲线变动
     ## 选取对比日期
-    today = end_day; base = df['2020':'2020'].index[-1]
+    today = end_day; base = df['2021':'2021'].index[-1]
     # 城投债
     name = '城投'+'_'+ grade +'_' 
 
@@ -113,7 +114,7 @@ def credit_curve(axes, grade,end_day):
         label='现值('+today.strftime('%Y%m%d')+')',\
         marker='o',color='#3778bf')
     d.loc[base.date()].plot(ax=axes,
-                color='#f0833a',label='2020年底',marker='s')
+                color='#f0833a',label='2021年底',marker='s')
     d.loc['25分位数'].plot(ax=axes,ls='--',color='lightgrey',alpha=1)
     d.loc['75分位数'].plot(ax=axes,ls='--',color='lightgrey',alpha=1)
     d.loc['中位数'].plot(ax=axes,color='orange',alpha=0.3)
@@ -186,7 +187,7 @@ def jjgs_net_buy(axes, kind = 'cre',rol = 5,se=None):
 
 if __name__ == '__main__':
     fig,ax = plt.subplots(nrows=1,ncols=1)
-    ax = credit_change(ax, 'AAA' , dt.datetime(2021,10,9))
+    ax = gk_new_old(ax)
     fig
 
 
